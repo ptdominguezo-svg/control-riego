@@ -2,7 +2,7 @@
    sin señal. Los datos NO pasan por acá — viven en IndexedDB y se envían
    al Worker. Sube el número de CACHE cada vez que edites index.html,
    si no los teléfonos siguen mostrando la versión vieja. */
-const CACHE = "monitoreo-riego-v5";
+const CACHE = "monitoreo-riego-v6";
 const ARCHIVOS = ["./", "./index.html", "./manifest.json"];
 
 self.addEventListener("install", ev => {

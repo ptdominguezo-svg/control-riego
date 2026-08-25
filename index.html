@@ -110,6 +110,7 @@ button{font:inherit; font-weight:650; border-radius:10px; padding:14px 16px; bor
 #toast.ok{background:var(--ok-bg); color:var(--ok)}
 #toast.err{background:var(--err-bg); color:var(--err)}
 .pie{text-align:center; color:var(--muted); font-size:12px; padding:4px 0 8px}
+.version{text-align:center; color:var(--muted); font-size:11px; margin:14px 0 0; letter-spacing:.04em}
 
 /* ── Pantalla de confirmación ── */
 .confirma{
@@ -179,6 +180,7 @@ button{font:inherit; font-weight:650; border-radius:10px; padding:14px 16px; bor
            placeholder="••••••••" aria-label="Clave de acceso">
     <div id="notaClave"></div>
     <button type="button" class="primario" id="entrar">Entrar</button>
+    <p class="version" id="version"></p>
   </div>
 </div>
 
@@ -1024,6 +1026,12 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("offline", pintarEstado);
   setInterval(() => sincronizar(false), 120000);
 });
+
+const VERSION = "v6 · 25-08-2026";
+{
+  const sello = document.getElementById("version");
+  if (sello) sello.textContent = VERSION;
+}
 
 if ("serviceWorker" in navigator){
   window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
