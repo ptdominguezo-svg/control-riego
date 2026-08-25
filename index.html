@@ -152,7 +152,7 @@ button{font:inherit; font-weight:650; border-radius:10px; padding:14px 16px; bor
 .marca-nom{font-size:13px; font-weight:600; letter-spacing:.09em; text-transform:uppercase; color:var(--muted)}
 .acceso h1{font-size:21px; margin:6px 0 0; letter-spacing:-.012em}
 .acceso p{font-size:13.5px; color:var(--muted); margin:0}
-#clave{text-align:center; font-size:22px; font-weight:600; letter-spacing:.5em; padding:14px 12px 14px 20px; margin-top:4px}
+#clave{text-align:center; font-size:22px; font-weight:600; letter-spacing:.25em; padding:14px 12px 14px 20px; margin-top:4px}
 #notaClave{display:none; font-size:12.5px; font-weight:500; padding:8px 10px; border-radius:8px; background:var(--err-bg); color:var(--err)}
 #notaClave.show{display:block}
 </style>
@@ -174,8 +174,9 @@ button{font:inherit; font-weight:650; border-radius:10px; padding:14px 16px; bor
     <div class="marca" id="marca"></div>
     <h1>Control de Riego</h1>
     <p>Ingresa la clave para comenzar</p>
-    <input type="password" id="clave" inputmode="numeric" autocomplete="off"
-           maxlength="12" placeholder="••••" aria-label="Clave de acceso">
+    <input type="password" id="clave" autocomplete="off" autocapitalize="off"
+           autocorrect="off" spellcheck="false" maxlength="24"
+           placeholder="••••••••" aria-label="Clave de acceso">
     <div id="notaClave"></div>
     <button type="button" class="primario" id="entrar">Entrar</button>
   </div>
@@ -292,7 +293,7 @@ const CONFIG = {
   /* Clave de acceso. Vive en el código de la app, así que frena el uso casual
      indebido, no a alguien decidido a leer el código fuente. Lo que protege de
      verdad los datos es el token del lado del servidor. */
-  clave    : "1234",
+  clave    : "Arandanos",
   /* "dia" pide la clave una vez por jornada; "siempre", cada vez que se abre. */
   vigencia : "dia",
   /* Logo de la empresa incrustado como data URI. Vacío = solo el nombre. */
@@ -914,7 +915,11 @@ function abrirApp(){ $("#acceso").classList.add("fuera"); }
 
 function intentarEntrar(){
   const nota = $("#notaClave");
-  if ($("#clave").value.trim() === String(CONFIG.clave)){
+  /* Se compara sin distinguir mayúsculas ni espacios sobrantes. En el teclado
+     del teléfono la primera letra sale en mayúscula sola, y una clave que
+     falla por eso genera más llamadas de las que evita. */
+  const escrita = $("#clave").value.trim().toLowerCase();
+  if (escrita === String(CONFIG.clave).trim().toLowerCase()){
     marcarAcceso();
     nota.className = "";
     abrirApp();
