@@ -1,0 +1,20 @@
+{
+  "name": "Monitoreo Riego",
+  "short_name": "Riego",
+  "description": "Registro en terreno de caudal, pH, CE, temperatura y humedad de sustrato",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f6f7f5",
+  "theme_color": "#0f766e",
+  "lang": "es-CL",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='96' fill='%230f766e'/%3E%3Cpath d='M256 96c0 0-104 118-104 186a104 104 0 0 0 208 0C360 214 256 96 256 96z' fill='%23fff'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
