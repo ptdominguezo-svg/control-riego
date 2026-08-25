@@ -342,7 +342,7 @@ const PREDIO = { fundo:"Lisonjera", especie:"Arándanos" };
    min/max = imposible, bloquea.  lo/hi = inusual, solo avisa. */
 const CAMPOS = {
   ph:           { etiqueta:"pH",                       unidad:"",      paso:"0.01", min:2,  max:12,     lo:5,    hi:7.5   },
-  ce:           { etiqueta:"Conductividad eléctrica",  unidad:"mS/cm", paso:"0.01", min:0,  max:20,     lo:0.5,  hi:5     },
+  ce:           { etiqueta:"Conductividad eléctrica",  unidad:"dS/m", paso:"0.01", min:0,  max:20,     lo:0.5,  hi:5     },
   caudal:       { etiqueta:"Caudal",                   unidad:"L/s",   paso:"0.01", min:0,  max:1000,   lo:0.1,  hi:100   },
   volRiego:     { etiqueta:"Volumen de riego",         unidad:"L",     paso:"0.01", min:0,  max:100000, lo:0.05, hi:20000 },
   volDrenaje:   { etiqueta:"Volumen de drenaje",       unidad:"L",     paso:"0.01", min:0,  max:100000, lo:0,    hi:8000  },
@@ -1027,7 +1027,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(() => sincronizar(false), 120000);
 });
 
-const VERSION = "v7 · 25-08-2026";
+const VERSION = "v8 · 25-08-2026";
 {
   const sello = document.getElementById("version");
   if (sello) sello.textContent = VERSION;
