@@ -463,6 +463,33 @@ function horaAhora(){ const d = new Date(); return dosDig(d.getHours()) + ":" + 
    ══════════════════════════════════════════════════════════════════ */
 let paso = 1, tipoActual = null, coords = null;
 
+/* En Chile el separador decimal es la coma, y el teclado del teléfono ofrece
+   coma — pero un <input type="number"> la rechaza en silencio: la tecla no
+   escribe nada y el operario cree que el teléfono se colgó. Por eso los campos
+   de medición son type="text" con inputmode="decimal" (mismo teclado numérico)
+   y acá se traduce la coma a punto antes de convertir. */
+function numero(txt){
+  if (typeof txt !== "string") txt = String(txt == null ? "" : txt);
+  const limpio = txt.trim().replace(/\s/g, "").replace(",", ".");
+  if (limpio === "" || !/^-?\d*\.?\d*$/.test(limpio) || !/\d/.test(limpio)) return NaN;
+  return parseFloat(limpio);
+}
+/* Filtra al vuelo lo que no puede ser parte de un número. Deja pasar la coma
+   igual que el punto: se normaliza al leer, no al escribir, para no pelearle
+   al cursor mientras el operario tipea. */
+function soloNumero(inp){
+  const antes = inp.value;
+  let v = antes.replace(/[^0-9.,-]/g, "");
+  const partes = v.split(/[.,]/);
+  if (partes.length > 2) v = partes[0] + (v.match(/[.,]/) || ",")[0] + partes.slice(1).join("");
+  v = v.replace(/(?!^)-/g, "");
+  if (v !== antes){
+    const pos = inp.selectionStart - (antes.length - v.length);
+    inp.value = v;
+    try { inp.setSelectionRange(pos, pos); } catch(_){}
+  }
+}
+
 /* ══════════════════════════════════════════════════════════════════
    VALIDACIÓN
    ══════════════════════════════════════════════════════════════════ */
@@ -481,9 +508,9 @@ function revisar(campo){
     aviso.textContent = "Falta este dato."; aviso.className = "aviso show";
     return false;
   }
-  if (ctrl.type !== "number") return true;
+  if (ctrl.dataset.num !== "1") return true;
 
-  const v = Number(crudo), d = ctrl.dataset;
+  const v = numero(crudo), d = ctrl.dataset;
   const num = k => (d[k] === undefined || d[k] === "" ? NaN : parseFloat(d[k]));
   const min = num("min"), max = num("max"), lo = num("lo"), hi = num("hi");
 
@@ -618,8 +645,8 @@ function pintarCampos(){
     return '<div class="campo">' +
       '<label for="f_' + clave + '">' + esc(c.etiqueta) +
         (c.unidad ? ' <span class="hint">' + esc(c.unidad) + "</span>" : "") + "</label>" +
-      '<input type="number" inputmode="decimal" id="f_' + clave + '" data-clave="' + clave + '"' +
-        ' step="' + c.paso + '" data-min="' + c.min + '" data-max="' + c.max +
+      '<input type="text" inputmode="decimal" autocomplete="off" id="f_' + clave + '" data-clave="' + clave + '"' +
+        ' data-num="1" data-min="' + c.min + '" data-max="' + c.max +
         '" data-lo="' + lo + '" data-hi="' + hi + '">' +
       '<div class="aviso"></div></div>';
   }).join("");
@@ -635,14 +662,17 @@ function pintarCampos(){
 
   document.querySelectorAll("#campos input").forEach(inp => {
     inp.addEventListener("blur",  () => revisar(inp.closest(".campo")));
-    if (inp.dataset.clave) inp.addEventListener("input", calcularDrenaje);
+    if (inp.dataset.clave) inp.addEventListener("input", () => {
+      if (inp.dataset.num === "1") soloNumero(inp);
+      calcularDrenaje();
+    });
   });
   calcularDrenaje();
 }
 
 function pctDrenaje(){
-  const r = parseFloat(($("#f_volRiego")   || {}).value);
-  const d = parseFloat(($("#f_volDrenaje") || {}).value);
+  const r = numero(($("#f_volRiego")   || {}).value);
+  const d = numero(($("#f_volDrenaje") || {}).value);
   if (!Number.isFinite(r) || !Number.isFinite(d) || r <= 0) return null;
   return Math.round(d / r * 1000) / 10;
 }
@@ -807,7 +837,7 @@ async function guardar(){
   Object.keys(CAMPOS).forEach(k => { d[k] = null; });
   document.querySelectorAll("#campos input[data-clave]").forEach(inp => {
     const v = inp.value.trim();
-    d[inp.dataset.clave] = v === "" ? null : Number(v);
+    d[inp.dataset.clave] = v === "" ? null : numero(v);
   });
   d.pctDrenaje = tipoActual === "drenaje" ? pctDrenaje() : null;
 
