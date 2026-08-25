@@ -490,6 +490,17 @@ function soloNumero(inp){
   }
 }
 
+/* Mientras alguien está corrigiendo un campo, el reproche viejo sobra: el
+   cartel se borra al primer toque y la validación vuelve a correr recién al
+   salir del campo. Dejarlo puesto hace creer que lo recién escrito también
+   está mal — que es justo lo que pasaba al escribir la coma. */
+function limpiarAviso(campo){
+  if (!campo) return;
+  campo.classList.remove("malo");
+  const aviso = campo.querySelector(".aviso");
+  if (aviso){ aviso.textContent = ""; aviso.className = "aviso"; }
+}
+
 /* ══════════════════════════════════════════════════════════════════
    VALIDACIÓN
    ══════════════════════════════════════════════════════════════════ */
@@ -662,8 +673,9 @@ function pintarCampos(){
 
   document.querySelectorAll("#campos input").forEach(inp => {
     inp.addEventListener("blur",  () => revisar(inp.closest(".campo")));
-    if (inp.dataset.clave) inp.addEventListener("input", () => {
+    inp.addEventListener("input", () => {
       if (inp.dataset.num === "1") soloNumero(inp);
+      limpiarAviso(inp.closest(".campo"));
       calcularDrenaje();
     });
   });
